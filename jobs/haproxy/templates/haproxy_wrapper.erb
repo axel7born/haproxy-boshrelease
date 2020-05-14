@@ -75,6 +75,10 @@ update_certs
 mkdir -p /var/vcap/jobs/haproxy/config/cidrs
 ttar < /var/vcap/jobs/haproxy/config/cidrs.ttar
 
+# reconstitute hosts based on ttar file
+mkdir -p /var/vcap/jobs/haproxy/config/hosts
+ttar < /var/vcap/jobs/haproxy/config/hosts.ttar
+
 #clean up leftovers from previous run
 cleanup_daemon
 

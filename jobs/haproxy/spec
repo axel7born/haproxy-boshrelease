@@ -16,6 +16,7 @@ templates:
   haproxy.config.erb:           config/haproxy.config
   certs.ttar.erb:               config/certs.ttar
   cidrs.ttar.erb:               config/cidrs.ttar
+  hosts.ttar.erb:               config/hosts.ttar
   ssl_redirect.map.erb:         config/ssl_redirect.map
   backend-ca-certs.erb:         config/backend-ca-certs.pem
   client-ca-certs.erb:          config/client-ca-certs.pem
@@ -432,6 +433,18 @@ properties:
         cidrs:
         - 5.22.1.3
         - 5.22.12.3
+
+  ha_proxy.hosts_in_file:
+    description: |
+      List of hosts that will be placed in /var/vcap/jobs/haproxy/config/hosts/<name>. Useful for acl's that reference
+      a long list of hosts (invoke the file with -f /var/vcap/jobs/haproxy/config/hosts/<name>).
+
+    example:
+      hosts_in_file:
+      - name: sample_hosts
+        hosts:
+        - host1.example-domain.com
+        - host2.example-domain.com
 
   ha_proxy.lua_scripts:
     description: |
