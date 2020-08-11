@@ -212,9 +212,6 @@ frontend http-in
     grace <%= (p("ha_proxy.drain_frontend_grace_time").to_f    * 1000).to_i %>
   <%- end -%>
     bind <%= p("ha_proxy.binding_ip") %>:80 <%= accept_proxy %> <%= v4v6 %>
-  <%- if properties.ha_proxy.frontend_config -%>
-    <%= p("ha_proxy.frontend_config") %>
-  <%- end -%>
   <%- if_p("ha_proxy.cidr_whitelist") do -%>
     acl whitelist src -f /var/vcap/jobs/haproxy/config/whitelist_cidrs.txt
     tcp-request content accept if whitelist
@@ -241,6 +238,9 @@ frontend http-in
       <%- end -%>
     http-request deny if <%= acl_names %>
     <%- end -%>
+  <%- end -%>
+  <%- if properties.ha_proxy.frontend_config -%>
+  <%= p("ha_proxy.frontend_config") %>
   <%- end -%>
   <%- if_p("ha_proxy.headers") do |headers| -%>
     <%- headers.each do |header, value| -%>
@@ -284,9 +284,6 @@ frontend https-in
     grace <%= (p("ha_proxy.drain_frontend_grace_time").to_f    * 1000).to_i %>
   <%- end -%>
     bind <%= p("ha_proxy.binding_ip") %>:443 <%= accept_proxy %> <%= tls_bind_options %> <%= v4v6 %>
-  <%- if properties.ha_proxy.frontend_config -%>
-    <%= p("ha_proxy.frontend_config") %>
-  <%- end -%>
   <%- if_p("ha_proxy.cidr_whitelist") do -%>
     acl whitelist src -f /var/vcap/jobs/haproxy/config/whitelist_cidrs.txt
     tcp-request content accept if whitelist
@@ -324,6 +321,9 @@ frontend https-in
       <%- end -%>
     http-request deny if <%= acl_names %>
     <%- end -%>
+  <%- end -%>
+  <%- if properties.ha_proxy.frontend_config -%>
+  <%= p("ha_proxy.frontend_config") %>
   <%- end -%>
   <%- if_p("ha_proxy.headers") do |headers| -%>
     <%- headers.each do |header, value| -%>
@@ -480,7 +480,7 @@ backend http-routers
     <%- health_check_options = "port " + p("ha_proxy.backend_http_health_port").to_s -%>
   <%- end -%>
   <%- backend_servers.each_with_index do |ip, index| -%>
-    server node<%= index %> <%= ip %>:<%= backend_port -%> <%= resolvers -%><%= backend_crt -%>check inter 1000 <%= health_check_options %> <%= backend_ssl %><%- if !backend_servers_local.empty? && !backend_servers_local.include?(ip) then -%> backup<%- end -%> 
+    server node<%= index %> <%= ip %>:<%= backend_port -%> <%= resolvers -%><%= backend_crt -%>check inter 1000 <%= health_check_options %> <%= backend_ssl %><%- if !backend_servers_local.empty? && !backend_servers_local.include?(ip) then -%> backup<%- end -%>
   <%- end -%>
 # }}}
 
@@ -604,7 +604,7 @@ backend tcp-<%= tcp_proxy["name"] %>
   end
 -%>
   <%- tcp_proxy["backend_servers"].each_with_index do |ip, index| -%>
-    server node<%= index %> <%= ip %>:<%= backend_port %> <%= resolvers -%>check inter 1000 <%= backend_ssl %><%- if tcp_proxy["backend_servers_local"] && !tcp_proxy["backend_servers_local"].empty? && !tcp_proxy["backend_servers_local"].include?(ip) then -%> backup<%- end -%> 
+    server node<%= index %> <%= ip %>:<%= backend_port %> <%= resolvers -%>check inter 1000 <%= backend_ssl %><%- if tcp_proxy["backend_servers_local"] && !tcp_proxy["backend_servers_local"].empty? && !tcp_proxy["backend_servers_local"].include?(ip) then -%> backup<%- end -%>
   <%- end -%>
 
   <%- if tcp_proxy["health_check_http"] then -%>
